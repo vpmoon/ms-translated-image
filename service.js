@@ -1,4 +1,3 @@
-const fs = require('fs');
 const vision = require('@google-cloud/vision');
 const { Translate } = require('@google-cloud/translate').v2;
 
@@ -8,9 +7,7 @@ const { createCanvas, loadImage } = require('canvas');
 
 require('dotenv').config()
 
-const imageFilePath = '/Users/vpetrenko/Documents/hackathon/2023-09-30 17.21.55.jpg';
 const targetLanguage = 'en';
-
 const translateClient = new Translate();
 
 // Function to extract text from an image
@@ -83,22 +80,9 @@ async function overlayTextOnImage(buffer, texts) {
 }
 
 async function getTranslatedImage (imageContent) {
-    const [all, ...rest] = await extractTextFromImage(imageContent); // Replace with your translated text
+    const [, ...rest] = await extractTextFromImage(imageContent);
 
-    const translatedImageStream = await overlayTextOnImage(imageContent, rest);
-
-    return translatedImageStream
+    return overlayTextOnImage(imageContent, rest);
 }
-
-async function main() {
-    const imageContent = fs.readFileSync(imageFilePath);
-    const [all, ...rest] = await extractTextFromImage(imageContent); // Replace with your translated text
-
-    const translatedImageStream = await overlayTextOnImage(imageContent, rest);
-    const outputImageStream = fs.createWriteStream('output_image.jpg'); // Replace with your output image file
-    translatedImageStream.pipe(outputImageStream);
-}
-
-// main().catch(console.error);
 
 module.exports = { getTranslatedImage }
