@@ -1,11 +1,10 @@
 const fs = require('fs');
-const { ImageAnnotatorClient } = require('@google-cloud/vision').v1;
 const vision = require('@google-cloud/vision');
 const { Translate } = require('@google-cloud/translate').v2;
 
 // Initialize Google Cloud Vision client with your API credentials
-// const visionClient = new ImageAnnotatorClient({ keyFilename: 'YOUR_VISION_API_KEY.json' });
 var sizeOf = require('image-size');
+const { createCanvas, loadImage } = require('canvas');
 
 require('dotenv').config()
 
@@ -32,14 +31,7 @@ async function translateText(text, targetLanguage) {
 
 // Function to overlay text on an image
 async function overlayTextOnImage(dimensions, imageFilePath, texts) {
-    const originalImageContent = fs.readFileSync(imageFilePath);
-    const client = new vision.ImageAnnotatorClient();
 
-    const [image] = await client.annotateImage({
-        image: { content: originalImageContent },
-        features: [{ type: 'TEXT_DETECTION' }],
-    });
-    const { createCanvas, loadImage } = require('canvas');
     // Overlay the text on the image
     const canvas = new createCanvas(dimensions.width, dimensions.height);
     const ctx = canvas.getContext('2d');
