@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^5.0.1",
+    "@google-cloud/translate": "^8.0.2",
+    "@google-cloud/vision": "^4.0.2",
+    "canvas": "^2.11.2",
+    "dotenv": "^16.3.1",
+    "node-gyp": "^9.3.0"
+  },
+  "devDependencies": {
+    "image-size": "^1.0.2"
+  }
+}
