@@ -45,7 +45,8 @@ async function translateText(text, targetLanguage) {
 }
 
 // Function to overlay text on an image
-async function overlayTextOnImage(dimensions, imageFilePath, texts) {
+async function overlayTextOnImage(imageFilePath, texts) {
+    const dimensions = await sizeOf(imageFilePath);
 
     // Overlay the text on the image
     const canvas = new createCanvas(dimensions.width, dimensions.height);
@@ -98,14 +99,11 @@ async function overlayTextOnImage(dimensions, imageFilePath, texts) {
 }
 
 async function main() {
-    sizeOf(imageFilePath, async function (err, dimensions) {
-        const [all, ...rest] = await extractTextFromImage(imageFilePath); // Replace with your translated text
+    const [all, ...rest] = await extractTextFromImage(imageFilePath); // Replace with your translated text
 
-        const translatedImageStream = await overlayTextOnImage(dimensions, imageFilePath, rest);
-        const outputImageStream = fs.createWriteStream('output_image.jpg'); // Replace with your output image file
-        translatedImageStream.pipe(outputImageStream);
-    });
-
+    const translatedImageStream = await overlayTextOnImage(imageFilePath, rest);
+    const outputImageStream = fs.createWriteStream('output_image.jpg'); // Replace with your output image file
+    translatedImageStream.pipe(outputImageStream);
 }
 
 main().catch(console.error);
