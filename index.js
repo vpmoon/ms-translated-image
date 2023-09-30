@@ -13,6 +13,21 @@ const targetLanguage = 'en';
 
 const translateClient = new Translate();
 
+// Create a new image with the translated text
+async function createTranslatedImage(translatedText, dimensions) {
+    const image = new Image();
+    image.src = imageContent;
+    const canvas = new createCanvas(dimensions.width, dimensions.height);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0);
+    // ctx.font = '24px Arial'; // Adjust font settings as needed
+    ctx.fillStyle = 'black'; // Text color
+    // console.log(dimensions.width, dimensions.height);
+
+    ctx.fillText(translatedText, 50, 50); // Adjust text position
+    return canvas.toBuffer('image/jpeg');
+}
+
 // Function to extract text from an image
 async function extractTextFromImage(imageFilePath) {
     const imageContent = fs.readFileSync(imageFilePath);
@@ -79,17 +94,16 @@ async function overlayTextOnImage(dimensions, imageFilePath, texts) {
         ctx.fillText(translatedText, x, y); // Adjust text position
     }));
 
-    // Save the modified image
-    const outputImageStream = fs.createWriteStream('output_image.jpg'); // Replace with your output image file
-    const stream = canvas.createJPEGStream();
-    stream.pipe(outputImageStream);
+    return canvas.createJPEGStream();
 }
 
 async function main() {
     sizeOf(imageFilePath, async function (err, dimensions) {
         const [all, ...rest] = await extractTextFromImage(imageFilePath); // Replace with your translated text
 
-        await overlayTextOnImage(dimensions, imageFilePath, rest);
+        const translatedImageStream = await overlayTextOnImage(dimensions, imageFilePath, rest);
+        const outputImageStream = fs.createWriteStream('output_image.jpg'); // Replace with your output image file
+        translatedImageStream.pipe(outputImageStream);
     });
 
 }
