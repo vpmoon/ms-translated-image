@@ -7,7 +7,6 @@ const { createCanvas, loadImage } = require('canvas');
 
 require('dotenv').config()
 
-const targetLanguage = 'en';
 const translateClient = new Translate();
 
 // Function to extract text from an image
@@ -20,13 +19,13 @@ async function extractTextFromImage(imageContent) {
 }
 
 // Translate the extracted text to your desired language
-async function translateText(text, targetLanguage) {
-    const [translation] = await translateClient.translate(text, targetLanguage);
+async function translateText(text, lang) {
+    const [translation] = await translateClient.translate(text, lang);
     return translation;
 }
 
 // Function to overlay text on an image
-async function overlayTextOnImage(buffer, texts) {
+async function overlayTextOnImage(buffer, texts, lang) {
     const dimensions = await sizeOf(buffer);
 
     // Overlay the text on the image
@@ -49,7 +48,7 @@ async function overlayTextOnImage(buffer, texts) {
         const x = vertices[0].x;
         const y = vertices[3].y;
 
-        const translatedText = await translateText(text, targetLanguage);
+        const translatedText = await translateText(text, lang);
         console.log(translatedText);
 
         // Set text properties
@@ -79,10 +78,10 @@ async function overlayTextOnImage(buffer, texts) {
     return canvas.toBuffer('image/jpeg');
 }
 
-async function getTranslatedImage (imageContent) {
+async function getTranslatedImage (imageContent, lang = 'en') {
     const [, ...rest] = await extractTextFromImage(imageContent);
 
-    return overlayTextOnImage(imageContent, rest);
+    return overlayTextOnImage(imageContent, rest, lang);
 }
 
 module.exports = { getTranslatedImage }
